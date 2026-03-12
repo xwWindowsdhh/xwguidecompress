@@ -13,10 +13,15 @@ class XWGuideCompressApp:
         """
         self.root = root
         self.root.title("xwguidecompress 0.1.0.202603131942-alpha")
-        self.root.geometry("500x300")
-        self.root.resizable(False, False)
 
         self.create_widgets()
+
+        self.root.update_idletasks()  # 更新界面以计算实际需要的大小
+        self.root.geometry('')  # 重置为自动大小
+        # 允许用户调整窗口大小
+        self.root.resizable(True, True)
+
+        self.root.minsize(400, 250)
 
     def create_widgets(self):
         """创建主界面框架和各个功能区域。"""
