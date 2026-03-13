@@ -80,6 +80,10 @@ README.md 项目介绍文件
 
 感谢所有为这个项目贡献代码的贡献者。
 
+感谢 Trae CN AI 编辑器。
+
+感谢 Kimi-K2-0905 AI 模型。
+
 完整作者请查看[AUTHORS.md](.github/AUTHORS.md)
 
 ## 联系与支持
