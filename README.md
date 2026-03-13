@@ -39,6 +39,19 @@
 
 请确保你的代码遵循项目已有的代码风格，并通过测试。
 
+请遵守参与者公约[CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
+
+## 项目结构
+
+.github/ GitHub 相关配置
+    AUTHORS.md 项目作者列表文件
+    CHANGELOG.md 项目更新日志文件
+    CODE_OF_CONDUCT.md 参与者公约文件
+    TODO.md 项目代办文件
+.gitignore git 忽略配置文件
+LICENSE 项目许可证文件
+README.md 项目介绍文件
+
 ## 许可证
 
 本项目采用[GNU Affero General Public License v3.0](LICENSE)分发
