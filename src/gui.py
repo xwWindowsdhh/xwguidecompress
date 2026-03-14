@@ -34,12 +34,12 @@ class XWGuideCompressApp:
             root: Tkinter 根窗口实例。
         """
         logger.info("=" * 50)
-        logger.info("程序启动 - xwguidecompress 0.1.0.202603141153-alpha.3")
+        logger.info("程序启动 - xwguidecompress 0.5.0.202603141426")
         logger.debug(f"操作系统: {os.name}")
         logger.debug(f"工作目录: {os.getcwd()}")
 
         self.root = root
-        self.root.title("xwguidecompress 0.1.0.202603141153-alpha.3")
+        self.root.title("xwguidecompress 0.5.0.202603141426")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
@@ -103,6 +103,11 @@ class XWGuideCompressApp:
         self.compress_path_var = tk.StringVar()
         compress_path_entry = ttk.Entry(compress_path_frame, textvariable=self.compress_path_var, width=40)
         compress_path_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+
+        self.compress_type_var = tk.StringVar(value="文件")
+        compress_type_combobox = ttk.Combobox(compress_path_frame, textvariable=self.compress_type_var, values=["文件", "文件夹"], width=8, state="readonly")
+        compress_type_combobox.pack(side=tk.LEFT, padx=(0, 5))
+        compress_type_combobox.bind("<<ComboboxSelected>>", self.on_compress_type_changed)
 
         compress_select_btn = ttk.Button(compress_path_frame, text="选择", command=self.on_compress_select)
         compress_select_btn.pack(side=tk.LEFT)
@@ -208,21 +213,17 @@ class XWGuideCompressApp:
             logger.debug(f"异常堆栈:\n{error_trace}")
             messagebox.showerror("错误", "解压失败，请查看控制台或日志了解详情")
 
+    def on_compress_type_changed(self, event=None):
+        """处理压缩类型选择变化事件。"""
+        selected_type = self.compress_type_var.get()
+        logger.debug(f"用户切换压缩类型为: {selected_type}")
+
     def on_compress_select(self):
-        """处理压缩文件选择按钮点击事件，支持选择文件或文件夹。"""
+        """处理压缩文件选择按钮点击事件，根据下拉选择栏的值选择文件或文件夹。"""
         logger.debug("用户点击'选择'按钮（压缩）")
 
-        choice_window = tk.Toplevel(self.root)
-        choice_window.title("选择类型")
-        choice_window.geometry("250x120")
-        choice_window.resizable(False, False)
-        choice_window.transient(self.root)
-        choice_window.grab_set()
-
-        ttk.Label(choice_window, text="请选择要压缩的内容类型：", padding="10").pack()
-
-        def select_file():
-            choice_window.destroy()
+        select_type = self.compress_type_var.get()
+        if select_type == "文件":
             file_path = filedialog.askopenfilename(title="选择要压缩的文件")
             if file_path:
                 self.compress_path_var.set(file_path)
@@ -236,9 +237,7 @@ class XWGuideCompressApp:
                     logger.info(f"用户选择压缩文件: {file_path}")
             else:
                 logger.debug("用户取消文件选择（压缩）")
-
-        def select_folder():
-            choice_window.destroy()
+        else:
             folder_path = filedialog.askdirectory(title="选择要压缩的文件夹")
             if folder_path:
                 self.compress_path_var.set(folder_path)
@@ -261,17 +260,6 @@ class XWGuideCompressApp:
                     logger.info(f"用户选择压缩文件夹: {folder_path}")
             else:
                 logger.debug("用户取消文件夹选择（压缩）")
-
-        btn_frame = ttk.Frame(choice_window)
-        btn_frame.pack(pady=10)
-        ttk.Button(btn_frame, text="选择文件", command=select_file).pack(side=tk.LEFT, padx=5)
-        ttk.Button(btn_frame, text="选择文件夹", command=select_folder).pack(side=tk.LEFT, padx=5)
-
-        # 居中显示
-        choice_window.update_idletasks()
-        x = (choice_window.winfo_screenwidth() - choice_window.winfo_width()) // 2
-        y = (choice_window.winfo_screenheight() - choice_window.winfo_height()) // 2
-        choice_window.geometry(f"+{x}+{y}")
 
     def on_compress_start(self):
         """处理开始压缩按钮点击事件，将文件或文件夹压缩为 zip 格式。"""
