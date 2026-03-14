@@ -46,6 +46,12 @@ class XWGuideCompressApp:
         self.create_widgets()
         logger.info("界面初始化完成")
 
+        self.root.update_idletasks()
+        self.root.geometry('')
+        self.root.resizable(True, True)
+
+        self.root.minsize(400, 250)
+
     def create_widgets(self):
         """创建主界面框架和各个功能区域。"""
         main_frame = ttk.Frame(self.root, padding="20")
