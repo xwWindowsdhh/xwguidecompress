@@ -65,6 +65,8 @@ python.exe src/main.py
     AUTHORS.md 项目作者列表文件
     CHANGELOG.md 项目更新日志文件
     CODE_OF_CONDUCT.md 参与者公约文件
+    CONTRIBUTING.md 贡献指南文件
+    PULL_REQUEST_TEMPLATE.md 提交 PR 提示文件
     TODO.md 项目代办文件
 logs/ 日志文件
     app_年/月/日.log 日志文件
