@@ -7,8 +7,8 @@
 #### 前提条件
 
 - **Python 3.6+**
-- **Windows**: Windows XP SP3 及以上
-- **Linux**: Ubuntu 18.04+ / Debian 10+ / Fedora 24+ 或任何能安装 Python 3.6 的发行版
+- **Windows**: Windows 7 SP1 及以上
+- **Linux**: Ubuntu 16.04+ / Debian 9+ / Fedora 26+ 或任何能安装 Python 3.6 的发行版
 - **macOS**: 10.9 Mavericks 及以上
 
 ## 使用方法
