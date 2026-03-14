@@ -48,7 +48,7 @@ python.exe src/main.py
 
 请确保你的代码遵循项目已有的代码风格，并通过测试。
 
-请遵守参与者公约[CODE\_OF\_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
+请遵守参与者公约[CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
 
 ## 项目结构
 

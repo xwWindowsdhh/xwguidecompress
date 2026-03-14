@@ -34,12 +34,12 @@ class XWGuideCompressApp:
             root: Tkinter 根窗口实例。
         """
         logger.info("=" * 50)
-        logger.info("程序启动 - xwguidecompress 0.1.0.202603141026-alpha.1")
+        logger.info("程序启动 - xwguidecompress 0.1.0.202603141058-alpha.2")
         logger.debug(f"操作系统: {os.name}")
         logger.debug(f"工作目录: {os.getcwd()}")
 
         self.root = root
-        self.root.title("xwguidecompress 0.1.0.202603141026-alpha.1")
+        self.root.title("xwguidecompress 0.1.0.202603141058-alpha.2")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
