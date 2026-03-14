@@ -34,12 +34,12 @@ class XWGuideCompressApp:
             root: Tkinter 根窗口实例。
         """
         logger.info("=" * 50)
-        logger.info("程序启动 - xwguidecompress 0.5.0.202603141426")
+        logger.info("程序启动 - xwguidecompress 0.6.0.202603141446")
         logger.debug(f"操作系统: {os.name}")
         logger.debug(f"工作目录: {os.getcwd()}")
 
         self.root = root
-        self.root.title("xwguidecompress 0.5.0.202603141426")
+        self.root.title("xwguidecompress 0.6.0.202603141446")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
@@ -82,8 +82,21 @@ class XWGuideCompressApp:
         extract_select_btn = ttk.Button(extract_path_frame, text="选择", command=self.on_extract_select)
         extract_select_btn.pack(side=tk.LEFT)
 
+        extract_output_frame = ttk.Frame(parent)
+        extract_output_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
+
+        extract_output_label = ttk.Label(extract_output_frame, text="输出路径:")
+        extract_output_label.pack(side=tk.LEFT, padx=(0, 5))
+
+        self.extract_output_var = tk.StringVar()
+        extract_output_entry = ttk.Entry(extract_output_frame, textvariable=self.extract_output_var, width=40)
+        extract_output_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+
+        extract_output_select_btn = ttk.Button(extract_output_frame, text="选择", command=self.on_extract_output_select)
+        extract_output_select_btn.pack(side=tk.LEFT)
+
         extract_start_btn = ttk.Button(parent, text="开始解压", command=self.on_extract_start)
-        extract_start_btn.grid(row=2, column=0, sticky=tk.W, pady=(5, 20))
+        extract_start_btn.grid(row=3, column=0, sticky=tk.W, pady=(5, 20))
 
     def create_compress_section(self, parent):
         """创建压缩功能区域。
@@ -92,10 +105,10 @@ class XWGuideCompressApp:
             parent: 父级容器框架。
         """
         compress_label = ttk.Label(parent, text="压缩", font=("Arial", 12, "bold"))
-        compress_label.grid(row=3, column=0, sticky=tk.W, pady=(0, 10))
+        compress_label.grid(row=4, column=0, sticky=tk.W, pady=(0, 10))
 
         compress_path_frame = ttk.Frame(parent)
-        compress_path_frame.grid(row=4, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
+        compress_path_frame.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
 
         compress_path_label = ttk.Label(compress_path_frame, text="文件路径:")
         compress_path_label.pack(side=tk.LEFT, padx=(0, 5))
@@ -112,8 +125,21 @@ class XWGuideCompressApp:
         compress_select_btn = ttk.Button(compress_path_frame, text="选择", command=self.on_compress_select)
         compress_select_btn.pack(side=tk.LEFT)
 
+        compress_output_frame = ttk.Frame(parent)
+        compress_output_frame.grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
+
+        compress_output_label = ttk.Label(compress_output_frame, text="输出路径:")
+        compress_output_label.pack(side=tk.LEFT, padx=(0, 5))
+
+        self.compress_output_var = tk.StringVar()
+        compress_output_entry = ttk.Entry(compress_output_frame, textvariable=self.compress_output_var, width=40)
+        compress_output_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+
+        compress_output_select_btn = ttk.Button(compress_output_frame, text="选择", command=self.on_compress_output_select)
+        compress_output_select_btn.pack(side=tk.LEFT)
+
         compress_start_btn = ttk.Button(parent, text="开始压缩", command=self.on_compress_start)
-        compress_start_btn.grid(row=5, column=0, sticky=tk.W, pady=(5, 0))
+        compress_start_btn.grid(row=7, column=0, sticky=tk.W, pady=(5, 0))
 
     def on_extract_select(self):
         """处理解压文件选择按钮点击事件。"""
@@ -131,6 +157,16 @@ class XWGuideCompressApp:
                 logger.info(f"用户选择解压文件: {source_path}")
         else:
             logger.debug("用户取消文件选择（解压）")
+
+    def on_extract_output_select(self):
+        """处理解压输出路径选择按钮点击事件。"""
+        logger.debug("用户点击'选择'按钮（解压输出路径）")
+        output_dir = filedialog.askdirectory(title="选择解压输出目录")
+        if output_dir:
+            self.extract_output_var.set(output_dir)
+            logger.info(f"用户选择解压输出目录: {output_dir}")
+        else:
+            logger.debug("用户取消输出目录选择（解压）")
 
     def on_extract_start(self):
         """处理开始解压按钮点击事件，将 zip 文件解压到同名目录。"""
@@ -153,7 +189,12 @@ class XWGuideCompressApp:
 
         source_dir = os.path.dirname(source_path)
         source_name = os.path.splitext(os.path.basename(source_path))[0]
-        extract_dir = os.path.join(source_dir, source_name)
+
+        output_path = self.extract_output_var.get()
+        if output_path:
+            extract_dir = output_path
+        else:
+            extract_dir = os.path.join(source_dir, source_name)
 
         logger.info(f"准备解压: {source_path}")
         logger.debug(f"目标解压目录: {extract_dir}")
@@ -261,6 +302,16 @@ class XWGuideCompressApp:
             else:
                 logger.debug("用户取消文件夹选择（压缩）")
 
+    def on_compress_output_select(self):
+        """处理压缩输出路径选择按钮点击事件。"""
+        logger.debug("用户点击'选择'按钮（压缩输出路径）")
+        output_dir = filedialog.askdirectory(title="选择压缩输出目录")
+        if output_dir:
+            self.compress_output_var.set(output_dir)
+            logger.info(f"用户选择压缩输出目录: {output_dir}")
+        else:
+            logger.debug("用户取消输出目录选择（压缩）")
+
     def on_compress_start(self):
         """处理开始压缩按钮点击事件，将文件或文件夹压缩为 zip 格式。"""
         logger.debug("用户点击'开始压缩'按钮")
@@ -284,7 +335,11 @@ class XWGuideCompressApp:
             name_without_ext = os.path.splitext(source_name)[0]
             zip_filename = f"{name_without_ext}_压缩.zip"
 
-        zip_path = os.path.join(source_dir, zip_filename)
+        output_dir = self.compress_output_var.get()
+        if output_dir:
+            zip_path = os.path.join(output_dir, zip_filename)
+        else:
+            zip_path = os.path.join(source_dir, zip_filename)
 
         counter = 1
         original_zip_path = zip_path
