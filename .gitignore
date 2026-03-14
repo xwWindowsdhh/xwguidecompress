@@ -1,3 +1,5 @@
 .trae/
 src/__pycache__/
 releases/
+test/
+logs/

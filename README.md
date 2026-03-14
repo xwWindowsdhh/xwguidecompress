@@ -58,6 +58,8 @@ python.exe src/main.py
     CHANGELOG.md 项目更新日志文件
     CODE_OF_CONDUCT.md 参与者公约文件
     TODO.md 项目代办文件
+logs/ 日志文件
+    app_年/月/日.log 日志文件
 src/ 项目源代码
     gui.py 图形化 GUI 界面代码文件
     main.py 主程序代码文件
