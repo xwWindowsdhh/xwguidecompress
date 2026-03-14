@@ -1,5 +1,27 @@
+import logging
+import os
+import traceback
+import zipfile
+from datetime import datetime
+
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
+
+log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
+os.makedirs(log_dir, exist_ok=True)
+
+log_filename = f"app_{datetime.now().strftime('%Y%m%d')}.log"
+log_path = os.path.join(log_dir, log_filename)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    handlers=[
+        logging.FileHandler(log_path, encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 
 class XWGuideCompressApp:
@@ -11,12 +33,18 @@ class XWGuideCompressApp:
         Args:
             root: Tkinter 根窗口实例。
         """
+        logger.info("=" * 50)
+        logger.info("程序启动 - xwguidecompress 0.1.0.202603141026-alpha.1")
+        logger.debug(f"操作系统: {os.name}")
+        logger.debug(f"工作目录: {os.getcwd()}")
+
         self.root = root
-        self.root.title("xwguidecompress 0.1.0.202603131942-alpha")
+        self.root.title("xwguidecompress 0.1.0.202603141026-alpha.1")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
         self.create_widgets()
+        logger.info("界面初始化完成")
 
     def create_widgets(self):
         """创建主界面框架和各个功能区域。"""
@@ -78,28 +106,129 @@ class XWGuideCompressApp:
 
     def on_extract_select(self):
         """处理解压文件选择按钮点击事件。"""
+        logger.debug("用户点击'选择'按钮（解压）")
         file_path = filedialog.askopenfilename(title="选择要解压的文件")
         if file_path:
             self.extract_path_var.set(file_path)
+            try:
+                file_size = os.path.getsize(file_path)
+                file_size_mb = file_size / (1024 * 1024)
+                logger.info(f"用户选择解压文件: {file_path}")
+                logger.debug(f"文件大小: {file_size} 字节 ({file_size_mb:.2f} MB)")
+            except OSError as e:
+                logger.warning(f"无法获取文件大小: {file_path}, 错误: {e}")
+                logger.info(f"用户选择解压文件: {file_path}")
+        else:
+            logger.debug("用户取消文件选择（解压）")
 
     def on_extract_start(self):
         """处理开始解压按钮点击事件。"""
+        logger.debug("用户点击'开始解压'按钮")
         file_path = self.extract_path_var.get()
         if not file_path:
-            messagebox.showerror("错误", "[解压] 错误: 未选择文件")
+            messagebox.showwarning("提示", "请选择要解压的文件")
+            logger.warning("用户未选择文件即点击解压")
             return
-        messagebox.showinfo("提示", f"[解压] 开始解压: {file_path}")
+
+        if not file_path.lower().endswith('.zip'):
+            messagebox.showwarning("提示", "仅支持 .zip 格式的文件")
+            logger.warning(f"文件格式不支持: {file_path}")
+            return
+
+        if not os.path.exists(file_path):
+            messagebox.showwarning("提示", "所选文件不存在")
+            logger.error(f"文件不存在: {file_path}")
+            return
+
+        zip_dir = os.path.dirname(file_path)
+        zip_name = os.path.splitext(os.path.basename(file_path))[0]
+        extract_dir = os.path.join(zip_dir, zip_name)
+
+        try:
+            file_size = os.path.getsize(file_path)
+            file_size_mb = file_size / (1024 * 1024)
+            logger.info(f"准备解压文件: {file_path}")
+            logger.debug(f"源文件大小: {file_size} 字节 ({file_size_mb:.2f} MB)")
+            logger.debug(f"目标解压目录: {extract_dir}")
+        except OSError as e:
+            logger.error(f"无法获取源文件信息: {e}")
+            logger.info(f"准备解压文件: {file_path}")
+
+        try:
+            os.makedirs(extract_dir, exist_ok=True)
+            logger.debug(f"创建解压目录: {extract_dir}")
+
+            extracted_files = []
+            total_extracted_size = 0
+
+            with zipfile.ZipFile(file_path, 'r') as zip_ref:
+                file_list = zip_ref.namelist()
+                logger.debug(f"压缩包内包含 {len(file_list)} 个条目")
+
+                for item in file_list:
+                    logger.debug(f"正在解压: {item}")
+                    zip_ref.extract(item, extract_dir)
+                    extracted_path = os.path.join(extract_dir, item)
+                    if os.path.isfile(extracted_path):
+                        item_size = os.path.getsize(extracted_path)
+                        total_extracted_size += item_size
+                        extracted_files.append((item, item_size))
+                        logger.debug(f"解压完成: {item} ({item_size} 字节)")
+
+            total_size_mb = total_extracted_size / (1024 * 1024)
+            logger.info(f"解压成功 - 共解压 {len(extracted_files)} 个文件")
+            logger.debug(f"解压总大小: {total_extracted_size} 字节 ({total_size_mb:.2f} MB)")
+            logger.debug(f"输出目录: {extract_dir}")
+            messagebox.showinfo("成功", "解压成功")
+        except zipfile.BadZipFile as e:
+            error_trace = traceback.format_exc()
+            logger.error(f"解压失败 - 文件损坏: {e}")
+            logger.debug(f"异常堆栈:\n{error_trace}")
+            messagebox.showerror("错误", "文件损坏或不是有效的压缩文件")
+        except RuntimeError as e:
+            error_trace = traceback.format_exc()
+            logger.error(f"解压失败 - RuntimeError: {e}")
+            logger.debug(f"异常堆栈:\n{error_trace}")
+            if 'password' in str(e).lower():
+                messagebox.showerror("错误", "文件受密码保护，无法解压")
+            else:
+                messagebox.showerror("错误", "解压失败，请查看控制台或日志了解详情")
+        except PermissionError as e:
+            error_trace = traceback.format_exc()
+            logger.error(f"解压失败 - 权限不足: {e}")
+            logger.debug(f"异常堆栈:\n{error_trace}")
+            messagebox.showerror("错误", "权限不足，无法写入目标目录")
+        except Exception as e:
+            error_trace = traceback.format_exc()
+            logger.error(f"解压失败 - 未知错误: {e}")
+            logger.debug(f"异常堆栈:\n{error_trace}")
+            messagebox.showerror("错误", "解压失败，请查看控制台或日志了解详情")
 
     def on_compress_select(self):
         """处理压缩文件选择按钮点击事件。"""
+        logger.debug("用户点击'选择'按钮（压缩）")
         file_path = filedialog.askopenfilename(title="选择要压缩的文件")
         if file_path:
             self.compress_path_var.set(file_path)
+            try:
+                file_size = os.path.getsize(file_path)
+                file_size_mb = file_size / (1024 * 1024)
+                logger.info(f"用户选择压缩文件: {file_path}")
+                logger.debug(f"文件大小: {file_size} 字节 ({file_size_mb:.2f} MB)")
+            except OSError as e:
+                logger.warning(f"无法获取文件大小: {file_path}, 错误: {e}")
+                logger.info(f"用户选择压缩文件: {file_path}")
+        else:
+            logger.debug("用户取消文件选择（压缩）")
 
     def on_compress_start(self):
         """处理开始压缩按钮点击事件。"""
+        logger.debug("用户点击'开始压缩'按钮")
         file_path = self.compress_path_var.get()
         if not file_path:
-            messagebox.showerror("错误", "[压缩] 错误: 未选择文件")
+            messagebox.showwarning("提示", "请选择要压缩的文件")
+            logger.warning("用户未选择文件即点击压缩")
             return
-        messagebox.showinfo("提示", f"[压缩] 开始压缩: {file_path}")
+
+        logger.info(f"用户尝试压缩文件（功能开发中）: {file_path}")
+        messagebox.showinfo("提示", "压缩功能开发中")
