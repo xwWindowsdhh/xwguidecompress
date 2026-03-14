@@ -34,12 +34,12 @@ class XWGuideCompressApp:
             root: Tkinter 根窗口实例。
         """
         logger.info("=" * 50)
-        logger.info("程序启动 - xwguidecompress 0.6.0.202603141446")
+        logger.info("程序启动 - xwguidecompress 0.7.0.202603141922")
         logger.debug(f"操作系统: {os.name}")
         logger.debug(f"工作目录: {os.getcwd()}")
 
         self.root = root
-        self.root.title("xwguidecompress 0.6.0.202603141446")
+        self.root.title("xwguidecompress 0.7.0.202603141922")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
@@ -78,6 +78,12 @@ class XWGuideCompressApp:
         self.extract_path_var = tk.StringVar()
         extract_path_entry = ttk.Entry(extract_path_frame, textvariable=self.extract_path_var, width=40)
         extract_path_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+
+        self.extract_mode_var = tk.StringVar(value="解压到文件夹")
+        extract_mode_combobox = ttk.Combobox(extract_path_frame, textvariable=self.extract_mode_var,
+                                             values=["解压到文件夹", "解压到此处"], width=12, state="readonly")
+        extract_mode_combobox.pack(side=tk.LEFT, padx=(0, 5))
+        extract_mode_combobox.bind("<<ComboboxSelected>>", self.on_extract_mode_changed)
 
         extract_select_btn = ttk.Button(extract_path_frame, text="选择", command=self.on_extract_select)
         extract_select_btn.pack(side=tk.LEFT)
@@ -158,6 +164,11 @@ class XWGuideCompressApp:
         else:
             logger.debug("用户取消文件选择（解压）")
 
+    def on_extract_mode_changed(self, event=None):
+        """处理解压模式选择变化事件。"""
+        selected_mode = self.extract_mode_var.get()
+        logger.debug(f"用户切换解压模式为: {selected_mode}")
+
     def on_extract_output_select(self):
         """处理解压输出路径选择按钮点击事件。"""
         logger.debug("用户点击'选择'按钮（解压输出路径）")
@@ -169,7 +180,7 @@ class XWGuideCompressApp:
             logger.debug("用户取消输出目录选择（解压）")
 
     def on_extract_start(self):
-        """处理开始解压按钮点击事件，将 zip 文件解压到同名目录。"""
+        """处理开始解压按钮点击事件，根据解压模式将 zip 文件解压到相应目录。"""
         logger.debug("用户点击'开始解压'按钮")
         source_path = self.extract_path_var.get()
         if not source_path:
@@ -187,16 +198,24 @@ class XWGuideCompressApp:
             logger.error(f"源路径不存在: {source_path}")
             return
 
+        extract_mode = self.extract_mode_var.get()
         source_dir = os.path.dirname(source_path)
         source_name = os.path.splitext(os.path.basename(source_path))[0]
-
         output_path = self.extract_output_var.get()
-        if output_path:
-            extract_dir = output_path
+
+        if extract_mode == "解压到文件夹":
+            if output_path:
+                extract_dir = os.path.join(output_path, source_name)
+            else:
+                extract_dir = os.path.join(source_dir, source_name)
         else:
-            extract_dir = os.path.join(source_dir, source_name)
+            if output_path:
+                extract_dir = output_path
+            else:
+                extract_dir = source_dir
 
         logger.info(f"准备解压: {source_path}")
+        logger.debug(f"解压模式: {extract_mode}")
         logger.debug(f"目标解压目录: {extract_dir}")
 
         try:

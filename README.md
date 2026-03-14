@@ -98,6 +98,8 @@ README.md 项目介绍文件
 
 感谢 Kimi-K2-0905 AI 模型。
 
+感谢 Kimi-K2.5 AI 模型。
+
 完整作者请查看[AUTHORS.md](.github/AUTHORS.md)
 
 ## 联系与支持
