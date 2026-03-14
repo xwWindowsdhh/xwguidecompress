@@ -50,6 +50,8 @@ python.exe src/main.py
 
 请遵守参与者公约[CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
 
+更多事项查看[CONTRIBUTING.md](.github/CONTRIBUTING.md)
+
 ## 项目结构
 
 ```
