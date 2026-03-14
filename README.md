@@ -34,6 +34,12 @@ python.exe src/main.py
 
 更新日志请查看[CHANGELOG.md](.github/CHANGELOG.md)
 
+对于 0.1.0 alpha 至 0.1.0 alpha.3 的致歉
+
+本项目版本号规则改编自[semver](https://semver.org/lang/zh-CN/)，但在使用先行版本号（MAY）时出现了错误理解，深表道歉
+
+日后我们定会严格遵循 主版本号.次版本号.编译日期-先行版本号.版本编译信息 规则，更加严谨的发布项目
+
 ## 参与贡献
 
 我们非常欢迎任何形式的贡献！
