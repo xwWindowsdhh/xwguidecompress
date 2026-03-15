@@ -7,8 +7,8 @@
 #### 前提条件
 
 - **Python 3.6+**
-- **Windows**: Windows XP SP3 及以上
-- **Linux**: Ubuntu 18.04+ / Debian 10+ / Fedora 24+ 或任何能安装 Python 3.6 的发行版
+- **Windows**: Windows 7 SP1 及以上
+- **Linux**: Ubuntu 16.04+ / Debian 9+ / Fedora 26+ 或任何能安装 Python 3.6 的发行版
 - **macOS**: 10.9 Mavericks 及以上
 
 ## 使用方法
@@ -28,11 +28,19 @@ python.exe src/main.py
 
 ## 常见问题
 
-暂无
+为什么我无法压缩文件夹？只能选择文件？
+
+压缩部分右侧有一个下拉框，可以选择文件/文件夹，选择文件夹即可
 
 ## 更新日志
 
 更新日志请查看[CHANGELOG.md](.github/CHANGELOG.md)
+
+对于 0.1.0 alpha 至 0.1.0 alpha.3 的致歉
+
+本项目版本号规则改编自[semver](https://semver.org/lang/zh-CN/)，但在使用先行版本号（MAY）时出现了错误理解，深表道歉
+
+日后我们定会严格遵循 主版本号.次版本号.编译日期-先行版本号（可选）.版本编译信息（可选） 规则，更加严谨的发布项目
 
 ## 参与贡献
 
@@ -48,7 +56,9 @@ python.exe src/main.py
 
 请确保你的代码遵循项目已有的代码风格，并通过测试。
 
-请遵守参与者公约[CODE\_OF\_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
+请遵守参与者公约[CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md)
+
+更多事项查看[CONTRIBUTING.md](.github/CONTRIBUTING.md)
 
 ## 项目结构
 
@@ -57,7 +67,11 @@ python.exe src/main.py
     AUTHORS.md 项目作者列表文件
     CHANGELOG.md 项目更新日志文件
     CODE_OF_CONDUCT.md 参与者公约文件
+    CONTRIBUTING.md 贡献指南文件
+    PULL_REQUEST_TEMPLATE.md 提交 PR 提示文件
     TODO.md 项目代办文件
+logs/ 日志文件
+    app_年/月/日.log 日志文件
 src/ 项目源代码
     gui.py 图形化 GUI 界面代码文件
     main.py 主程序代码文件
@@ -83,6 +97,8 @@ README.md 项目介绍文件
 感谢 Trae CN AI 编辑器。
 
 感谢 Kimi-K2-0905 AI 模型。
+
+感谢 Kimi-K2.5 AI 模型。
 
 完整作者请查看[AUTHORS.md](.github/AUTHORS.md)
 
