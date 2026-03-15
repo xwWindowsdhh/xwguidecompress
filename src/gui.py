@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+import os
+import json
 
 
 class XWGuideCompressApp:
@@ -13,6 +15,9 @@ class XWGuideCompressApp:
         """
         self.root = root
         self.root.title("xwguidecompress 0.1.0.202603131942-alpha")
+
+        self.config_file = os.path.join(os.path.dirname(__file__), "config.json")
+        self.last_compress_dir = self.load_last_compress_dir()  # 加载上次选择的压缩文件夹路径
 
         self.create_widgets()
 
@@ -83,7 +88,7 @@ class XWGuideCompressApp:
 
     def on_extract_select(self):
         """处理解压文件选择按钮点击事件。"""
-        file_path = filedialog.askopenfilename(title="选择要解压的文件")
+        file_path = filedialog.askopenfilename(title="选择要解压的文件", filetypes=[("ZIP files", "*.zip")])
         if file_path:
             self.extract_path_var.set(file_path)
 
@@ -97,9 +102,11 @@ class XWGuideCompressApp:
 
     def on_compress_select(self):
         """处理压缩文件选择按钮点击事件。"""
-        file_path = filedialog.askopenfilename(title="选择要压缩的文件")
-        if file_path:
-            self.compress_path_var.set(file_path)
+        folder_path = filedialog.askdirectory(title="选择要压缩的文件夹", initialdir=self.last_compress_dir)
+        if folder_path:
+            self.compress_path_var.set(folder_path)
+            self.last_compress_dir = folder_path
+            self.save_last_compress_dir(folder_path)
 
     def on_compress_start(self):
         """处理开始压缩按钮点击事件。"""
@@ -108,3 +115,25 @@ class XWGuideCompressApp:
             messagebox.showerror("错误", "[压缩] 错误: 未选择文件")
             return
         messagebox.showinfo("提示", f"[压缩] 开始压缩: {file_path}")
+
+    def load_last_compress_dir(self):
+        """加载上次选择的压缩文件夹路径。
+
+        Returns:
+            str: 上次选择的压缩文件夹路径，如果不存在则返回空字符串。
+        """
+        if os.path.exists(self.config_file):
+            with open(self.config_file, "r", encoding="utf-8") as f:
+                config = json.load(f)
+                return config.get("last_compress_dir", "")
+        return ""
+
+    def save_last_compress_dir(self, folder_path):
+        """保存上次选择的压缩文件夹路径。
+
+        Args:
+            folder_path (str): 要保存的文件夹路径。
+        """
+        config = {"last_compress_dir": folder_path}
+        with open(self.config_file, "w", encoding="utf-8") as f:
+            json.dump(config, f, ensure_ascii=False, indent=4)
