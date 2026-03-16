@@ -34,12 +34,12 @@ class XWGuideCompressApp:
             root: Tkinter 根窗口实例。
         """
         logger.info("=" * 50)
-        logger.info("程序启动 - xwguidecompress 0.7.0.202603141922")
+        logger.info("程序启动 - xwguidecompress 0.8.0.202603161608")
         logger.debug(f"操作系统: {os.name}")
         logger.debug(f"工作目录: {os.getcwd()}")
 
         self.root = root
-        self.root.title("xwguidecompress 0.7.0.202603141922")
+        self.root.title("xwguidecompress 0.8.0.202603161608")
         self.root.geometry("500x300")
         self.root.resizable(False, False)
 
@@ -352,7 +352,7 @@ class XWGuideCompressApp:
             zip_filename = f"{source_name}.zip"
         else:
             name_without_ext = os.path.splitext(source_name)[0]
-            zip_filename = f"{name_without_ext}_压缩.zip"
+            zip_filename = f"{name_without_ext}.zip"
 
         output_dir = self.compress_output_var.get()
         if output_dir:
